@@ -35,6 +35,7 @@ def draw(im,line,idx,show = False):
     for i in range(len(line_x)-1):
         cv2.line(im,pt0,(int(line_x[i+1]),int(line_y[i+1])),(idx,),thickness = 16)
         pt0 = (int(line_x[i+1]),int(line_y[i+1]))
+
 def get_tusimple_list(root, label_list):
     '''
     Get all the files' names from the json annotation
@@ -78,7 +79,7 @@ def generate_segmentation_and_train_list(root, line_txt, names):
             lines.append(list(map(float,tmp_line[j])))
         
         ks = np.array([calc_k(line) for line in lines])             # get the direction of each lane
-
+        
         k_neg = ks[ks<0].copy()
         k_pos = ks[ks>0].copy()
         k_neg = k_neg[k_neg != -10]                                      # -10 means the lane is too short and is discarded
@@ -87,7 +88,7 @@ def generate_segmentation_and_train_list(root, line_txt, names):
         k_pos.sort()
 
         label_path = names[i][:-3]+'png'
-        label = np.zeros((720,1280),dtype=np.uint8)
+        label = np.zeros((480,848),dtype=np.uint8)
         bin_label = [0,0,0,0]
         if len(k_neg) == 1:                                           # for only one lane in the left
             which_lane = np.where(ks == k_neg[0])[0][0]
@@ -142,12 +143,12 @@ if __name__ == "__main__":
     args = get_args().parse_args()
 
     # training set
-    names,line_txt = get_tusimple_list(args.root,  ['label_data_0601.json','label_data_0531.json','label_data_0313.json'])
+    names,line_txt = get_tusimple_list(args.root,  ['label_train.json'])
     # generate segmentation and training list for training
     generate_segmentation_and_train_list(args.root, line_txt, names)
 
     # testing set
-    names,line_txt = get_tusimple_list(args.root, ['test_tasks_0627.json'])
+    names,line_txt = get_tusimple_list(args.root, ['test_labels.json'])
     # generate testing set for testing
     with open(os.path.join(args.root,'test.txt'),'w') as fp:
         for name in names:

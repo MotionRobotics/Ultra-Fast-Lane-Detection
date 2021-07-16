@@ -1,6 +1,6 @@
 # DATA
 dataset='Tusimple'
-data_root = None
+data_root = '/home/joe/Projects/lanenet_annotation/Ski_Dataset'
 
 # TRAIN
 epoch = 100
@@ -36,7 +36,7 @@ finetune = None
 resume = None
 
 # TEST
-test_model = None
-test_work_dir = None
+test_model = "/home/joe/Projects/Ultra-Fast-Lane-Detection/model_weights/ep099.pth"
+test_work_dir = "./tmp"
 
 num_lanes = 4

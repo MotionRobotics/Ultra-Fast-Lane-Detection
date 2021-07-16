@@ -8,6 +8,7 @@ import torchvision.transforms as transforms
 import cv2
 from matplotlib import pyplot as plt
 from PIL import Image
+import pyrealsense2 as rs
 
 
 img_transforms = transforms.Compose([
@@ -28,7 +29,7 @@ def test_practical_without_readtime():
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         img2 = Image.fromarray(img)
         x = img_transforms(img2)
-        x = x.unsqueeze(0).cuda()+1
+        x = x.unsqueeze(0)+1
         y = net(x)
         
     print("pracrical image input size:",img.shape)
@@ -40,7 +41,7 @@ def test_practical_without_readtime():
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         img2 = Image.fromarray(img)
         x = img_transforms(img2)
-        x = x.unsqueeze(0).cuda()+1
+        x = x.unsqueeze(0)+1
 
         t1 = time.time()
         y = net(x)
@@ -59,13 +60,17 @@ def test_practical_without_readtime():
  
     
 def test_practical():
-    global cap
+    # global cap
+    global pipeline
     for i in range(10):
         _,img = cap.read()
+        # frames = pipeline.wait_for_frames()
+        # color_frame = frames.get_color_frame()
+        # img = np.asanyarray(color_frame.get_data())
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         img2 = Image.fromarray(img)
         x = img_transforms(img2)
-        x = x.unsqueeze(0).cuda()+1
+        x = x.unsqueeze(0)+1
         y = net(x)
         
     print("pracrical image input size:",img.shape)
@@ -79,13 +84,17 @@ def test_practical():
         
         t3 = time.time()
         _,img = cap.read()
+        # frames = pipeline.wait_for_frames()
+        # color_frame = frames.get_color_frame()
+        # img = np.asanyarray(color_frame.get_data())
+        print(img.shape)
         t4 = time.time()
         
         t5 = time.time()
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         img2 = Image.fromarray(img)
         x = img_transforms(img2)
-        x = x.unsqueeze(0).cuda()+1
+        x = x.unsqueeze(0)+1
         t6 = time.time()
 
         y = net(x)
@@ -110,7 +119,7 @@ def test_practical():
     
 ###x = torch.zeros((1,3,288,800)).cuda() + 1
 def test_theoretical():
-    x = torch.zeros((1,3,288,800)).cuda() + 1
+    x = torch.zeros((1,3,288,800)) + 1
     for i in range(10):
         y = net(x)
     
@@ -135,14 +144,20 @@ def test_theoretical():
 
 if __name__ == "__main__":
     ###captrue data from camera or video
-    #cap = cv2.VideoCapture("video.mp4") #uncommen to activate a video input
-    cap = cv2.VideoCapture(0) #uncommen to activate a camera imput
+    cap = cv2.VideoCapture("/home/joe/Projects/lanenet_annotation/Ski_Dataset/joe/data_video0.avi") #uncommen to activate a video input
+    # cap = cv2.VideoCapture(0) #uncommen to activate a camera imput
     #resize(480, 640) #ucommen to change input size
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 848)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
     
+    # pipeline = rs.pipeline()
+    # config = rs.config()
+    # config.enable_stream(rs.stream.color, 848, 480, rs.format.bgr8, 60)
+    # pipeline.start(config)
     
     # torch.backends.cudnn.deterministic = False
-    torch.backends.cudnn.benchmark = True
-    net = parsingNet(pretrained = False, backbone='18',cls_dim = (100+1,56,4),use_aux=False).cuda()
+    # torch.backends.cudnn.benchmark = True
+    net = parsingNet(pretrained = False, backbone='18',cls_dim = (100+1,56,4),use_aux=False)
     # net = parsingNet(pretrained = False, backbone='18',cls_dim = (200+1,18,4),use_aux=False).cuda()
     net.eval()
     
@@ -150,4 +165,5 @@ if __name__ == "__main__":
     test_practical_without_readtime()
     test_practical()
     cap.release()
+    # pipeline.stop()
     test_theoretical()    

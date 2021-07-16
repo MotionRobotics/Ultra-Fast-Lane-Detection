@@ -54,7 +54,7 @@ def run_test(net, data_root, exp_name, work_dir, griding_num, use_aux,distribute
     # import pdb;pdb.set_trace()
     for i, data in enumerate(dist_tqdm(loader)):
         imgs, names = data
-        imgs = imgs.cuda()
+        # imgs = imgs.cuda()
         with torch.no_grad():
             out = net(imgs)
         if len(out) == 2 and use_aux:
