@@ -36,7 +36,7 @@ finetune = None
 resume = None
 
 # TEST
-test_model = "/home/joe/Projects/Ultra-Fast-Lane-Detection/model_weights/ep099.pth"
+test_model = "/home/joe/Projects/Ultra-Fast-Lane-Detection/model_weights/ep009.pth"
 test_work_dir = "./tmp"
 
 num_lanes = 4
