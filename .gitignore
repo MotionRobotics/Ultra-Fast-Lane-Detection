@@ -1,7 +1,6 @@
 **/__pycache__
 
 *.pyc
-*.pth
 
 *vscode
 
@@ -10,10 +9,12 @@
 evaluate 
 tmp
 
+# Video files
 *.avi
+*.mp4
 
 model2.py
 
-# PyTorch 
+# PyTorch Model Weights
 *.pt
 *.pth
